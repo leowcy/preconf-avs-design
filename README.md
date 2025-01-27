@@ -17,7 +17,7 @@ Design an Active Validator Service(AVS) on EigenLayer that provides credible pre
 
 - Below is the understanding of Users/L1 network/AVS+EigenLayer(L2) relationship diagram.
 
-![Diagram](user_l1_avs.png "User L1 AVS relationship")
+![Diagram](references/user_l1_avs.png "User L1 AVS relationship")
 
 ---
 
