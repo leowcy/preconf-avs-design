@@ -6,22 +6,22 @@ Design an Active Validator Service(AVS) on EigenLayer that provides credible pre
 ---
 
 ## 🎯 Objectives
-- System Architecture
-- Economic Model Thinkings
-- Security Analysis
-- Implementation Considerations
+- [System Architecture](#-system-architecture)
+- [Economic Model](#-economic-model)
+- [Security Analysis](#-security-analysis)
+- [Implementation Considerations](#-implementation-considerations)
 
 ---
 
 ## 💡 Basic Understanding for Users + L1 + AVS
 
-- Below is the understanding of Users/L1 network/AVS+EigenLayer(L2) relationship diagram.
+- High level of Users/L1 network/AVS+EigenLayer(L2) diagram. (Happy path)
 
 ![Diagram](references/user_l1_avs.png "User L1 AVS relationship")
 
 ---
 
-## 💡 Proposed Solution
+## 💡 System Architecture
 Explain the proposed solution in detail:
 - **Description**: Describe the solution and how it solves the problem.
 - **Methodology**: Outline the approach or technologies involved.
@@ -29,26 +29,27 @@ Explain the proposed solution in detail:
 
 ---
 
-## 📊 Benefits
-Highlight the benefits of implementing this proposal:
-- How does it improve or solve the problem?
-- What value does it add (e.g., cost-saving, efficiency, usability)?
+## 💡 Economic Model
+Explain the proposed solution in detail:
+- **Description**: Describe the solution and how it solves the problem.
+- **Methodology**: Outline the approach or technologies involved.
+- **Deliverables**: List what will be delivered (e.g., code, documentation, designs).
 
 ---
 
-## 🛠 Implementation Plan
+## 💡 Security Analysis
+Explain the proposed solution in detail:
+- **Description**: Describe the solution and how it solves the problem.
+- **Methodology**: Outline the approach or technologies involved.
+- **Deliverables**: List what will be delivered (e.g., code, documentation, designs).
+
+---
+
+## 💡 Implementation Considerations
 Provide an actionable plan for implementation:
 1. **Phase 1**: Define the initial setup or research phase.
 2. **Phase 2**: Outline development or production steps.
 3. **Phase 3**: Describe testing and deployment.
-
----
-
-## 📦 Resources Required
-List the resources needed:
-- Tools or software
-- Personnel
-- Budget (if applicable)
 
 ---
 
