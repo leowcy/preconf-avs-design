@@ -1,0 +1,12 @@
+# JustinDrake
+https://ethresear.ch/t/based-rollups-superpowers-from-l1-sequencing/15016
+https://ethresear.ch/t/based-preconfirmations/17353/1
+
+# UniFi AVS
+https://docs.puffer.fi/unifi-avs-protocol
+
+# Luban
+https://docs.luban.wtf/learn/fundamentals/life_cycle_of_a_preconf_tx
+
+# AVS Developer Guide: 
+https://docs.eigenlayer.xyz/developers/avs-developer-guide
