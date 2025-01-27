@@ -3,13 +3,12 @@
 ## 📋 Overview
 Design an Active Validator Service(AVS) on EigenLayer that provides credible preconfirmations for Eth transactions.
 
-
 ---
 
 ## 🎯 Target
 - Low lantency: Offer a solution with ~100ms processing time.
 - Highly secure: Make sure the preconfirmation AVS service is credible to both user and validator. 
-- Incentive: Include reasonable mechanism to reward/punish validators' activites. Be attractive to more validators.
+- Incentive: Include reasonable mechanism to reward/punish validators' activites.
 - Compatibility: Can be easily integrated with L1 networks and reuse some features from Eigenlayer restaking.
 
 ---
@@ -108,7 +107,7 @@ Design an Active Validator Service(AVS) on EigenLayer that provides credible pre
             2. If the revocation is malicious intent and excessive revocations from the validator, then they will lose a portion of their stake as a penalty.
     
     - What happens to preconfirmations during chain reorganizations?
-        - If the preconfirmation specifies a range of valid blocks (e.g., N to N+2), the promise may still be fulfilled in subsequent blocks.
+        - If the preconfirmation specifies a range of valid blocks (N to N+2), the promise may still be fulfilled in subsequent blocks.
         - These transactions are typically returned to the mempool unless otherwise excluded or replaced.
         - Applied dynamic solutoin to this: 
             - Transactions from reorged blocks are reprioritized in the mempool to ensure they are included in the replacement blocks.
@@ -136,23 +135,89 @@ Design an Active Validator Service(AVS) on EigenLayer that provides credible pre
 ---
 
 ## 💡 Economic Model
-Explain the proposed solution in detail:
-- **Description**: Describe the solution and how it solves the problem.
-- **Methodology**: Outline the approach or technologies involved.
-- **Deliverables**: List what will be delivered (e.g., code, documentation, designs).
+- **Design of penalties for safety violations**:
+    - Malicious Behavior:
+        - Intentional actions that disrupt the system or harm users.
+        - Larger penalties, up to complete slashing. Also, depends on the amount of times violations.
+        - Temporarily suspended from participating in the preconfirmation system if applicable.
+        - Stake higher collateral for future participation. For example, A validator with two violations must double their collateral to remain active.
+    - Incorrect Execution:
+        - Validator fails to include a preconfirmed transaction in the promised block or block range.
+        - Providing false preconfirmation promises (promising a transaction that cannot fit within gas limits or block capacity).
+        - Minor violations result in smaller penalties.
 
+- **Design of penalties for liveness violations**:
+    - Slashing
+        - The severity of slashing depends on the frequency and magnitude of the liveness violation. For example, A validator fails to respond to a preconfirmation request within the required timeframe and loses 0.1% of their staked collateral.
+    - Rewards reduction
+        - Reduces the validator’s earned rewards (transaction fees, tips, or block rewards) for failing to maintain liveness.
+    - Incremental Penalties for Repeated Violations
+        - Each subsequent liveness violation within a set timeframe results in progressively higher penalties.
+    - Lose future chance
+        - Validators who violate liveness requirements are excluded from participating in future opportunities (proposing blocks, earning rewards).
+    - User Compensation
+        - Penalties collected from liveness violations are redistributed to users whose transactions or requests were delayed.
+
+- **Fee Market Design**: 
+    - Base Fee:
+        - network wide fee applies to all transactions. Will dynamically adjust based on network congestion.
+    - Preconfirmation Fee:
+        - Paid by user to incentivize validators to prioritize their transactions. A user can attach a higher tip to ensure their transaction is included faster.
+    - Penalty Fee:
+        - Compensates validators for issuing signed promises and bearing the risk of slashing if promises are broken.
+
+- **MEV considerations**:
+    - MEV (Maximal Extractable Value) refers to the additional value that validators or block proposers can extract by reordering, including, or excluding transactions within a block. Managing MEV effectively is critical for ensuring fairness, reducing economic centralization, and maintaining user trust.
+    - Use of Inclusion Lists. Prevents censorship and ensures preconfirmed transactions are included regardless of MEV opportunities.
+    - Commit-Reveal Schemes. Makes it difficult for colluding parties to act on sensitive information ahead of time.
+    - PBS (Proposer-Builder Separation) Separates block construction (by builders) from block proposing (by validators).
+
+- **Collusion prevention mechanisms**:
+    - Slashing for Collusion
+        - Penalizes validators who engage in collusion by slashing their staked collateral.
+        - A system smart contract monitors validator behavior and slashes stakes if collusion is detected(conflicting promises or excluded preconfirmed transactions).
+    - Reward redistribution
+        - Redirects rewards from colluding participants to honest validators and users.
+    - Applies increasingly severe penalties for repeated collusion attempts.
 ---
 
 ## 💡 Security Analysis
-- Use cryptographic techniques (commit-reveal schemes) to protect sensitive transaction data in preconfirmation requests, reducing the risk of frontrunning or gaming.
+- **Attack vectors**:
+    - User level: 
+        - Attackers reuse preconfirmation promises or transactions across multiple blocks or chains.
+        - Includes unique identifiers (nonces, timestamps) in preconfirmation promises to prevent reuse.
+    - Validator level:
+        - Collusion: Validators collaborate to manipulate transaction inclusion, reorder transactions, or censor specific transactions.
+        - Validators issue conflicting preconfirmation promises for the same transaction or block, creating ambiguity.
+    - MEV Exploitation: See above.
+        - Commit-Reveal Schemes.
+
+- **Frontrunning or gaming**:
+    - Use cryptographic techniques (commit-reveal schemes) to protect sensitive transaction data in preconfirmation requests.
 
 ---
 
 ## 💡 Implementation Considerations
-Provide an actionable plan for implementation:
-1. **Phase 1**: Define the initial setup or research phase.
-2. **Phase 2**: Outline development or production steps.
-3. **Phase 3**: Describe testing and deployment.
+1. **Builder integration**:
+    - Ensure that preconfirmed transactions are included in the promised order or range.
+    - Validate the signed preconfirmation promises attached to transactions.
+    - Financial incentives to prioritize preconfirmed transactions without compromising on MEV opportunities.
+    - Communicate constructed blocks to validators efficiently. Use protocol PBS to enable validators to choose best builder-proposed blocks.
+    - For integrating with EigenLayer's restaking system, we should utilize restaked ETH or other tokens as collateral to guarantee the performance and accountability of validators participating in the AVS.
+2. **Network timing constraints**:
+    - Preconfirmation systems must ensure that validators can process promises and include transactions within ~12s.
+    - Use peer-to-peer propagation protocols optimized for low-latency communication.
+    - Use high-performance infrastructure (low-latency APIs) to handle requests.
+    - Process multiple preconfirmation requests in batches to reduce computational overhead and improve response times.
+3. **Scalability approach**:
+    - Handle preconfirmation commitments off-chain while anchoring them to Layer 1 for security.
+    - Spread validation tasks across multiple nodes to reduce bottlenecks.
+    - Validators handle preconfirmation requests in parallel to block-building tasks.
+    - Use Merkle trees to batch promises and reduce data size.
+4. **Upgrade path**:
+    - Design upgrades to be implemented with minimal network interruptions.
+    - Ensure upgrades do not disrupt existing preconfirmation promises or validator operations.
+    - Deploy upgrades on testnets to identify bugs or performance bottlenecks.
 
 ---
 
@@ -161,15 +226,14 @@ Provide an actionable plan for implementation:
 might you prevent this?  
   - **Mitigation**: 
     - Limit the number of preconfirmed transactions allowed per block.
-    - Use a fallback mechanism (e.g., roll over unprocessed preconfirmed transactions to subsequent blocks).
+    - Use a fallback mechanism (roll over unprocessed preconfirmed transactions to subsequent blocks).
 
 - **Risk 2**: What happens if a block containing preconfirmed transactions gets reorged?
-    - **Mitigation**: Plan to address it
+    - **Mitigation**: Similar to above. Fallback to a subsequent blocks.
 
-- ** Risk 3**: If a proposer receives a preconfirmation request just before the build phase, they might fail to include it, resulting in broken preconfirmation promises and potential slashing.
-    - **Mitigation**: Implement a cutoff time for preconfirmation requests (e.g., 20 seconds before the target block).
+- **Risk 3**: If a proposer receives a preconfirmation request just before the build phase, they might fail to include it, resulting in broken preconfirmation promises and potential slashing.
+    - **Mitigation**: Implement a cutoff time for preconfirmation requests (20 seconds before the target block).
 Reject or deprioritize requests submitted after this cutoff to reduce the risk of broken promises.
-
 
 ---
 
