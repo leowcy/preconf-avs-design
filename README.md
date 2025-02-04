@@ -46,7 +46,7 @@ Design an Active Validator Service(AVS) on EigenLayer that provides credible pre
     - Validators may choose not to include certain transactions
     - Flashbots and MEV-Boost relay censorship can prevent transactions from appearing in blocks.
 
-### L2 rollups + centrailized sequencer
+### L2 rollups + centrailized sequencer + preconf
 ![Diagram](references/l2-rollup-centralized-seq.png)
 #### Pros:
 - Faster Transaction Processing, low-latency.
@@ -62,7 +62,7 @@ Design an Active Validator Service(AVS) on EigenLayer that provides credible pre
 ---
 
 ## 💡 System Architecture
-### High level flow chart for AVS preconf:
+### High level flow chart for AVS preconf + decentralized sequencer:
 
 ![Diagram](references/decentralized-sequencer-design.png)
 
